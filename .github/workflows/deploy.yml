@@ -22,6 +22,10 @@ jobs:
       # Set this as a repository VARIABLE (Settings → Secrets and variables → Actions → Variables).
       # It is public (no secret). Must point at your live extraction service.
       PUBLIC_DOWNLOADER_API: ${{ vars.PUBLIC_DOWNLOADER_API }}
+      # Project-pages base path + canonical URL. Override BASE_PATH if the repo is renamed,
+      # or set both to a custom domain (BASE_PATH=/) if you use one.
+      BASE_PATH: /youtube-downloader
+      SITE_URL: https://mohammedmoataz.github.io
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
