@@ -36,6 +36,7 @@ function setStatus(text: string | null) {
     s.textContent = text;
     show(s, true);
   } else {
+    s.textContent = '';
     show(s, false);
   }
 }
