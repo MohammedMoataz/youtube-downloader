@@ -13,6 +13,10 @@ export default defineConfig({
   output: 'static',
   base,
   site,
+  // Dev & preview run on 5173 so the browser origin matches the extraction service's
+  // CORS allow-list (GT_CORS_ORIGINS=http://localhost:5173,http://localhost:3000).
+  // Switch to 3000 here if you prefer that origin (also allow-listed).
+  server: { port: 5173 },
   // The extraction-service base URL is read at build/runtime from PUBLIC_DOWNLOADER_API.
   // Astro exposes PUBLIC_-prefixed env vars to client code; no secret is ever embedded.
 });
