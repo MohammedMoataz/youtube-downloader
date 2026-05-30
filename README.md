@@ -31,6 +31,35 @@ npm run build && npm run preview
 
 Deploy the `dist/` folder to any static host/CDN. No server runtime required.
 
+## Run the full stack with Docker (front-end + backend)
+
+`docker-compose.yml` brings up the **backend extraction service first** (it must report healthy)
+and then the **static front-end**. It requires the backend repo checked out as a sibling
+directory `../grabtube-extraction-service`.
+
+```bash
+docker compose up --build        # build + run (Ctrl+C to stop)
+docker compose up --build -d     # detached
+docker compose down              # stop & remove
+```
+
+Then open:
+
+- **Front-end:** http://localhost:8088
+- **Backend:**  http://localhost:8080  (health: `/health`)
+
+How it's wired (important for static front-ends):
+
+- The front-end is static, so `PUBLIC_DOWNLOADER_API` is **baked at image-build time** (a build
+  arg) and points at the **host-published** backend `http://localhost:8080` — *not* the compose
+  service name, because the browser runs on your host, outside the compose network.
+- The browser origin is `http://localhost:8088`, so the backend is started with
+  `GT_CORS_ORIGINS=http://localhost:8088`.
+
+To change ports/origins, edit `docker-compose.yml` (`frontend.ports`, `extractor.environment`,
+and the `PUBLIC_DOWNLOADER_API` build arg) together so the three stay consistent. For real
+deployment, serve both over HTTPS behind a reverse proxy and set the origins/URLs accordingly.
+
 ## Testing
 
 ```bash
