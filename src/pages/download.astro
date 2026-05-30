@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LinkInput from '../components/LinkInput.astro';
+import MediaPreview from '../components/MediaPreview.astro';
+import PlaylistPreview from '../components/PlaylistPreview.astro';
+import FormatPicker from '../components/FormatPicker.astro';
+import DownloadProgress from '../components/DownloadProgress.astro';
+---
+
+<BaseLayout title="Download — GrabTube">
+  <h1>Download</h1>
+
+  <div class="relink">
+    <p class="muted">Need a different link?</p>
+    <LinkInput />
+  </div>
+
+  <!-- Shown when JavaScript is unavailable (progressive enhancement, Principle IV). -->
+  <p id="needs-js" class="card needs-js">
+    Downloading requires JavaScript to talk to the conversion service. Please enable JavaScript and
+    reload. You can still browse the <a href="/faq">FAQ</a> and <a href="/about">About</a> pages.
+  </p>
+
+  <div id="app" hidden>
+    <p id="status" class="muted" hidden></p>
+
+    <div id="error" class="card error" role="alert" hidden>
+      <p id="error-msg"></p>
+      <button id="retry-btn" class="btn" type="button">Try again</button>
+    </div>
+
+    <MediaPreview />
+    <PlaylistPreview />
+    <FormatPicker />
+    <DownloadProgress />
+  </div>
+</BaseLayout>
+
+<script>
+  import { initDownloader } from '../islands/downloader';
+  initDownloader();
+</script>
+
+<style>
+  .relink {
+    margin-block: var(--sp-4) var(--sp-8);
+    display: grid;
+    gap: var(--sp-2);
+    max-width: 48rem;
+  }
+  .needs-js {
+    border-color: rgba(255, 212, 121, 0.4);
+  }
+  .error {
+    border-color: var(--c-danger);
+  }
+  .error p {
+    margin-top: 0;
+    color: var(--c-danger);
+  }
+</style>

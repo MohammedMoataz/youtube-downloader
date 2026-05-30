@@ -1,0 +1,33 @@
+---
+const year = 2026;
+---
+
+<footer class="site-footer">
+  <p class="notice">
+    <strong>Responsible use:</strong> You are responsible for complying with applicable copyright law
+    and the terms of service of any platform you download from. GrabTube does not host, store, or
+    distribute any copyrighted content.
+  </p>
+  <p class="muted small">© {year} GrabTube · A static front-end demo · No accounts, no tracking.</p>
+</footer>
+
+<style>
+  .site-footer {
+    width: min(1100px, 92vw);
+    margin-inline: auto;
+    padding-block: var(--sp-8);
+    border-top: 1px solid var(--c-border);
+    margin-top: var(--sp-12);
+  }
+  .notice {
+    color: var(--c-text-dim);
+    font-size: var(--fs-300);
+    max-width: 70ch;
+  }
+  .notice strong {
+    color: var(--c-text);
+  }
+  .small {
+    font-size: var(--fs-300);
+  }
+</style>

@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About — GrabTube">
+  <h1>About GrabTube</h1>
+  <div class="prose card">
+    <p>
+      GrabTube is a fast, sleek front-end for downloading YouTube videos as MP4 or extracting MP3
+      audio — complete with the title, author, and cover art embedded in the file. Paste a single
+      video or a whole playlist; we hand the heavy lifting to a dedicated conversion service and give
+      you back a clean file (or a tidy ZIP for playlists).
+    </p>
+    <h2>How it works</h2>
+    <p class="muted">
+      The website you are looking at is fully static — there is no server, no database, and no
+      account system here. When you start a download, your browser talks directly to a separate,
+      configurable conversion service that does the actual extraction and packaging. Nothing about
+      your activity is stored on this site.
+    </p>
+    <h2>Responsible use</h2>
+    <p class="muted">
+      GrabTube is a tool. You are responsible for complying with applicable copyright law and with
+      the terms of service of any platform you download from. Please only download content you have
+      the right to use. GrabTube does not host, store, or distribute any copyrighted material.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .prose {
+    max-width: 70ch;
+  }
+  .prose h2 {
+    font-size: var(--fs-400);
+    margin-top: var(--sp-6);
+  }
+  .prose p {
+    margin-top: 0;
+  }
+</style>
