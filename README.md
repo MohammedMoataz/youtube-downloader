@@ -20,7 +20,7 @@ project [constitution](.specify/memory/constitution.md).
 npm install
 cp .env.example .env          # set PUBLIC_DOWNLOADER_API (mock or self-hosted service)
 npm run mock-api              # terminal 1: local extraction-service mock (http://localhost:8787)
-npm run dev                   # terminal 2: Astro dev server (http://localhost:4321)
+npm run dev                   # terminal 2: Astro dev server (http://localhost:5173)
 ```
 
 Production build (static):

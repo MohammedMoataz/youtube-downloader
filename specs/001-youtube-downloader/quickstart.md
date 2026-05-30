@@ -27,7 +27,7 @@ PUBLIC_DOWNLOADER_API=http://localhost:8787   # mock or self-hosted extraction s
 ## Run (development)
 
 ```bash
-npm run dev          # Astro dev server (default http://localhost:4321)
+npm run dev          # Astro dev server (http://localhost:5173 — matches the service CORS allow-list)
 npm run mock-api     # optional: local mock implementing the extraction-service contract
 ```
 

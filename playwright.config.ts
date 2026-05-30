@@ -6,7 +6,7 @@ export default defineConfig({
   fullyParallel: true,
   reporter: 'list',
   use: {
-    baseURL: 'http://localhost:4321',
+    baseURL: 'http://localhost:5173',
   },
   projects: [
     { name: 'e2e', testMatch: /e2e\/.*\.spec\.ts/, use: { ...devices['Desktop Chrome'] } },
@@ -24,7 +24,7 @@ export default defineConfig({
     },
     {
       command: 'npm run preview',
-      url: 'http://localhost:4321',
+      url: 'http://localhost:5173',
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
     },
