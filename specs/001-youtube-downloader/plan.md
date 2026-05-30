@@ -105,6 +105,7 @@ src/
 │   ├── LinkInput.astro    # Featured input (real <form>, enhanced by island)
 │   ├── MediaPreview.astro # Title/thumbnail/author/duration display
 │   ├── FormatPicker.astro # MP4 quality + MP3 selection
+│   ├── PlaylistPreview.astro  # Playlist title + ordered item list + count
 │   └── DownloadProgress.astro # Per-item + overall progress UI
 ├── islands/               # Client-side TS that enhances the static pages
 │   ├── downloader.ts      # Orchestrates resolve → job → progress → download
