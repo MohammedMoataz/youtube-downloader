@@ -1,0 +1,44 @@
+/* Design tokens — the single source of truth for the visual identity (FR-021).
+   A distinctive dark, neon-accented aesthetic that stands out from generic downloaders. */
+:root {
+  /* Brand palette */
+  --c-bg: #0b0f17;
+  --c-bg-elev: #121826;
+  --c-surface: #1a2234;
+  --c-border: #28324a;
+  --c-text: #e9eef7;
+  --c-text-dim: #9aa7bd;
+  --c-accent: #ff2d55; /* YouTube-red-adjacent, punchier */
+  --c-accent-2: #2de2e6; /* cyan glow */
+  --c-accent-grad: linear-gradient(135deg, #ff2d55 0%, #ff7a00 100%);
+  --c-focus: #2de2e6;
+  --c-danger: #ff5c5c;
+  --c-ok: #3ad29f;
+
+  /* Type scale (fluid) */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fs-300: clamp(0.8rem, 0.76rem + 0.2vw, 0.9rem);
+  --fs-400: clamp(1rem, 0.95rem + 0.25vw, 1.1rem);
+  --fs-600: clamp(1.35rem, 1.1rem + 1.2vw, 2rem);
+  --fs-800: clamp(2.2rem, 1.6rem + 3vw, 4rem);
+
+  /* Spacing */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+
+  /* Radius & shadow */
+  --radius: 14px;
+  --radius-lg: 22px;
+  --shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.6);
+  --glow: 0 0 0 1px var(--c-border), 0 8px 30px -8px rgba(45, 226, 230, 0.25);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur: 280ms;
+}

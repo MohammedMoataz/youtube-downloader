@@ -1,0 +1,28 @@
+---
+// Static shell for a playlist's details (FR-010). Filled at runtime by the downloader island.
+---
+<section id="playlist" class="card" hidden aria-live="polite">
+  <h2 id="playlist-title">—</h2>
+  <p class="muted"><span id="playlist-count">0</span> videos</p>
+  <p id="playlist-warning" class="warning" hidden></p>
+  <ol id="playlist-items" class="playlist-items"></ol>
+</section>
+
+<style>
+  .playlist-items {
+    margin: var(--sp-4) 0 0;
+    padding-left: 1.25rem;
+    max-height: 16rem;
+    overflow: auto;
+    display: grid;
+    gap: var(--sp-2);
+  }
+  .warning {
+    color: #ffd479;
+    background: rgba(255, 212, 121, 0.08);
+    border: 1px solid rgba(255, 212, 121, 0.3);
+    padding: var(--sp-3) var(--sp-4);
+    border-radius: var(--radius);
+    font-size: var(--fs-300);
+  }
+</style>

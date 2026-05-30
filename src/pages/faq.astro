@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const faqs = [
+  {
+    q: 'What links can I use?',
+    a: 'Single YouTube video links (youtube.com/watch, youtu.be, Shorts) and YouTube playlist links (any link containing a list= playlist id).',
+  },
+  {
+    q: 'What formats can I download?',
+    a: 'Video as MP4, or audio as MP3. MP3 files include the title, author/channel, and cover artwork as embedded metadata.',
+  },
+  {
+    q: 'What video qualities are available?',
+    a: 'Whatever the source video provides, up to a maximum of 1080p (Full HD). Resolutions above 1080p are not offered.',
+  },
+  {
+    q: 'How do playlist downloads work?',
+    a: 'Paste a playlist link and we process every video in your chosen format, then bundle them into a single ZIP file. There is no fixed limit on playlist size, but very large playlists take longer and produce a bigger archive — you can cancel any time.',
+  },
+  {
+    q: 'Do I need an account?',
+    a: 'No. GrabTube has no sign-up, no login, and stores nothing about you. Your link stays in your browser.',
+  },
+  {
+    q: 'Is this legal?',
+    a: 'You are responsible for complying with copyright law and YouTube’s Terms of Service. Only download content you have the right to download. GrabTube does not host or distribute any content.',
+  },
+];
+---
+
+<BaseLayout title="FAQ — GrabTube">
+  <h1>Frequently asked questions</h1>
+  <div class="faq-list">
+    {
+      faqs.map((f) => (
+        <details class="card">
+          <summary>{f.q}</summary>
+          <p class="muted">{f.a}</p>
+        </details>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .faq-list {
+    display: grid;
+    gap: var(--sp-3);
+    max-width: 70ch;
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: var(--fs-400);
+  }
+  details[open] summary {
+    margin-bottom: var(--sp-2);
+  }
+  p {
+    margin-bottom: 0;
+  }
+</style>

@@ -1,0 +1,34 @@
+{
+  "name": "youtube-downloader",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sleek static front-end for downloading YouTube videos (MP4) and audio (MP3) via a separate extraction service.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "mock-api": "node tests/mocks/extraction-service.mjs",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test --project=e2e",
+    "test:a11y": "playwright test --project=a11y",
+    "test:perf": "lhci autorun",
+    "test": "npm run test:unit && npm run build && npm run test:e2e && npm run test:a11y"
+  },
+  "dependencies": {
+    "astro": "^5.6.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
+    "@lhci/cli": "^0.14.0",
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^22.10.0",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.0",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  }
+}

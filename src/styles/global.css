@@ -1,0 +1,146 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* The `hidden` attribute must win over component display rules (e.g. flex/grid),
+   so the island can reliably show/hide regions by toggling `hidden`. */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-sans);
+  font-size: var(--fs-400);
+  line-height: 1.6;
+  color: var(--c-text);
+  background:
+    radial-gradient(1200px 600px at 70% -10%, rgba(255, 45, 85, 0.12), transparent 60%),
+    radial-gradient(900px 500px at 10% 10%, rgba(45, 226, 230, 0.1), transparent 55%),
+    var(--c-bg);
+}
+
+main {
+  flex: 1;
+  width: min(1100px, 92vw);
+  margin-inline: auto;
+  padding-block: var(--sp-12);
+}
+
+a {
+  color: var(--c-accent-2);
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.15;
+  margin-block: 0 var(--sp-4);
+}
+
+h1 {
+  font-size: var(--fs-800);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: var(--fs-600);
+}
+
+/* Accessibility: skip link + visible focus (constitution Principle II) */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--c-accent);
+  color: #fff;
+  padding: var(--sp-2) var(--sp-4);
+  z-index: 100;
+  border-radius: 0 0 var(--radius) 0;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--c-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Buttons */
+.btn {
+  --_bg: var(--c-surface);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font: inherit;
+  font-weight: 600;
+  padding: var(--sp-3) var(--sp-6);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  background: var(--_bg);
+  color: var(--c-text);
+  cursor: pointer;
+  transition:
+    transform var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),
+    background var(--dur) var(--ease);
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glow);
+}
+.btn-primary {
+  background: var(--c-accent-grad);
+  border-color: transparent;
+  color: #fff;
+}
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Cards / surfaces */
+.card {
+  background: var(--c-bg-elev);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-6);
+  box-shadow: var(--shadow);
+}
+
+.muted {
+  color: var(--c-text-dim);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Respect reduced motion (Principle II / IV) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

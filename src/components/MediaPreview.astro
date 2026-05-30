@@ -1,0 +1,38 @@
+---
+// Static shell for a single video's details (FR-004). Filled at runtime by the downloader island.
+---
+<section id="preview" class="card preview" hidden aria-live="polite">
+  <img id="preview-thumb" class="preview-thumb" alt="" width="320" height="180" />
+  <div class="preview-meta">
+    <h2 id="preview-title">—</h2>
+    <p class="muted">
+      <span id="preview-author">—</span> · <span id="preview-duration">—</span>
+    </p>
+  </div>
+</section>
+
+<style>
+  .preview {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: var(--sp-6);
+    align-items: center;
+    margin-block: var(--sp-6);
+  }
+  .preview-thumb {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    background: var(--c-surface);
+  }
+  @container (max-width: 600px) {
+    .preview {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 600px) {
+    .preview {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

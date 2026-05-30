@@ -1,0 +1,89 @@
+---
+const path = Astro.url.pathname;
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/download', label: 'Download' },
+  { href: '/faq', label: 'FAQ' },
+  { href: '/about', label: 'About' },
+];
+const isActive = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+---
+
+<header class="site-header">
+  <a class="brand" href="/">
+    <span class="brand-mark" aria-hidden="true">▶</span>
+    <span>Grab<strong>Tube</strong></span>
+  </a>
+  <nav aria-label="Primary">
+    <ul>
+      {
+        links.map((l) => (
+          <li>
+            <a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    width: min(1100px, 92vw);
+    margin-inline: auto;
+    padding-block: var(--sp-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    flex-wrap: wrap;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--fs-600);
+    font-weight: 800;
+    color: var(--c-text);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 1.6em;
+    height: 1.6em;
+    border-radius: 50%;
+    background: var(--c-accent-grad);
+    color: #fff;
+    font-size: 0.7em;
+  }
+  nav ul {
+    display: flex;
+    gap: var(--sp-2);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+  nav a {
+    display: inline-block;
+    padding: var(--sp-2) var(--sp-4);
+    border-radius: var(--radius);
+    color: var(--c-text-dim);
+    text-decoration: none;
+    transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+  }
+  nav a:hover {
+    color: var(--c-text);
+    background: var(--c-surface);
+  }
+  nav a[aria-current='page'] {
+    color: var(--c-text);
+    background: var(--c-surface);
+    box-shadow: inset 0 -2px 0 0 var(--c-accent);
+  }
+</style>

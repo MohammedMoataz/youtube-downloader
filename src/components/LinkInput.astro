@@ -1,0 +1,52 @@
+---
+// Featured link input (FR-001). A real <form> so it works without JS (Principle IV):
+// no-JS submit navigates to /download?url=...; the island enhances it to stay on-page.
+interface Props {
+  autofocus?: boolean;
+}
+const { autofocus = false } = Astro.props;
+---
+
+<form class="link-form" action="/download" method="get" data-link-form>
+  <label class="visually-hidden" for="yt-url">YouTube video or playlist link</label>
+  <input
+    id="yt-url"
+    name="url"
+    type="url"
+    inputmode="url"
+    required
+    autofocus={autofocus}
+    placeholder="Paste a YouTube video or playlist link…"
+    autocomplete="off"
+    spellcheck="false"
+  />
+  <button class="btn btn-primary" type="submit">Get it</button>
+</form>
+
+<style>
+  .link-form {
+    display: flex;
+    gap: var(--sp-2);
+    background: var(--c-bg-elev);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-2);
+    box-shadow: var(--glow);
+    flex-wrap: wrap;
+  }
+  input {
+    flex: 1 1 16rem;
+    min-width: 0;
+    font: inherit;
+    color: var(--c-text);
+    background: transparent;
+    border: 0;
+    padding: var(--sp-3) var(--sp-4);
+  }
+  input::placeholder {
+    color: var(--c-text-dim);
+  }
+  button {
+    flex: 0 0 auto;
+  }
+</style>

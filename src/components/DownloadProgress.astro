@@ -1,0 +1,80 @@
+---
+// Progress UI (FR-013): overall bar + per-item rows for playlists (FR-011/FR-012),
+// plus a cancel control for large batches (FR-022). Driven by the downloader island.
+---
+<section id="progress" class="card" hidden aria-live="polite">
+  <div class="progress-head">
+    <h2 id="progress-label">Preparing…</h2>
+    <button id="cancel-btn" class="btn" type="button" hidden>Cancel</button>
+  </div>
+
+  <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="overall-bar-wrap">
+    <span id="overall-bar" class="bar-fill" style="width:0%"></span>
+  </div>
+  <p id="overall-pct" class="muted small">0%</p>
+
+  <ol id="job-items" class="job-items"></ol>
+
+  <template id="job-item-tpl">
+    <li class="job-item">
+      <span class="job-item-title"></span>
+      <span class="job-item-status"></span>
+    </li>
+  </template>
+
+  <p id="done-row" hidden>
+    <a id="download-link" class="btn btn-primary" download>Save file</a>
+  </p>
+</section>
+
+<style>
+  .progress-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+  }
+  .bar {
+    height: 12px;
+    background: var(--c-surface);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-block: var(--sp-3) var(--sp-2);
+  }
+  .bar-fill {
+    display: block;
+    height: 100%;
+    background: var(--c-accent-grad);
+    transition: width var(--dur) var(--ease);
+  }
+  .job-items {
+    list-style: none;
+    margin: var(--sp-4) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--sp-2);
+    max-height: 18rem;
+    overflow: auto;
+  }
+  .job-item {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding: var(--sp-2) var(--sp-3);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+  }
+  .job-item-status {
+    color: var(--c-text-dim);
+    font-size: var(--fs-300);
+  }
+  .job-item[data-state='done'] .job-item-status {
+    color: var(--c-ok);
+  }
+  .job-item[data-state='failed'] .job-item-status {
+    color: var(--c-danger);
+  }
+  .small {
+    font-size: var(--fs-300);
+  }
+</style>
