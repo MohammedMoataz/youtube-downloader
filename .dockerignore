@@ -1,0 +1,19 @@
+# Keep the build context small and deterministic.
+node_modules
+dist
+.astro
+.git
+.github
+.specify
+.claude
+specs
+tests
+playwright-report
+test-results
+coverage
+.lighthouseci
+# Never bake local env into the image — the build ARG controls PUBLIC_DOWNLOADER_API.
+.env
+.env.*
+!.env.example
+*.log
