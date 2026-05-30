@@ -1,13 +1,14 @@
 ---
 // Featured link input (FR-001). A real <form> so it works without JS (Principle IV):
 // no-JS submit navigates to /download?url=...; the island enhances it to stay on-page.
+import { withBase } from '../lib/paths';
 interface Props {
   autofocus?: boolean;
 }
 const { autofocus = false } = Astro.props;
 ---
 
-<form class="link-form" action="/download" method="get" data-link-form>
+<form class="link-form" action={withBase('download')} method="get" data-link-form>
   <label class="visually-hidden" for="yt-url">YouTube video or playlist link</label>
   <input
     id="yt-url"

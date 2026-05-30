@@ -5,6 +5,7 @@ import MediaPreview from '../components/MediaPreview.astro';
 import PlaylistPreview from '../components/PlaylistPreview.astro';
 import FormatPicker from '../components/FormatPicker.astro';
 import DownloadProgress from '../components/DownloadProgress.astro';
+import { withBase } from '../lib/paths';
 ---
 
 <BaseLayout title="Download — GrabTube">
@@ -18,11 +19,13 @@ import DownloadProgress from '../components/DownloadProgress.astro';
   <!-- Shown when JavaScript is unavailable (progressive enhancement, Principle IV). -->
   <p id="needs-js" class="card needs-js">
     Downloading requires JavaScript to talk to the conversion service. Please enable JavaScript and
-    reload. You can still browse the <a href="/faq">FAQ</a> and <a href="/about">About</a> pages.
+    reload. You can still browse the <a href={withBase('faq')}>FAQ</a> and
+    <a href={withBase('about')}>About</a> pages.
   </p>
 
   <div id="app" hidden>
-    <p id="status" class="muted" hidden></p>
+    <!-- role="status" => polite live region: status text is announced to screen readers (a11y). -->
+    <p id="status" class="muted" role="status" hidden></p>
 
     <div id="error" class="card error" role="alert" hidden>
       <p id="error-msg"></p>

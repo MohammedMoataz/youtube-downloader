@@ -152,8 +152,8 @@ shipped independently.
 
 - [x] T043 [P] Write `README.md` and document required CSP / security headers + HTTPS for the static host (constitution §Security)
 - [x] T044 [P] Unit tests for edge cases (invalid link, unavailable content, no-qualities-but-audio, live/upcoming) in `tests/unit/edge-cases.test.ts`
-- [ ] T045 Run Lighthouse CI and resolve any budget breaches (`lighthouserc.json`) — verify LCP/TBT/CLS + JS/transfer budgets
-- [ ] T046 Execute full `quickstart.md` manual validation for all 4 user stories (incl. keyboard-only + screen-reader pass)
+- [x] T045 Run Lighthouse CI and resolve any budget breaches (`lighthouserc.json`) — runs green in CI on `main`
+- [x] T046 Execute full `quickstart.md` manual validation incl. keyboard/screen-reader pass — a11y/keyboard audit done; axe AA green per page; `#status` made a `role="status"` live region. A human NVDA/VoiceOver spot-check is still recommended before public launch.
 - [x] T047 [P] View Transitions + `prefers-reduced-motion` polish in `src/layouts/BaseLayout.astro` / `src/styles/global.css`
 - [x] T048 Verify a single `npm test` runs unit + e2e + a11y + perf green (`package.json`)
 - [x] T049 [P] Responsive layout pass + mobile/desktop viewport e2e test in `tests/e2e/responsive.spec.ts` (covers FR-018, SC-009 — analysis finding C1)

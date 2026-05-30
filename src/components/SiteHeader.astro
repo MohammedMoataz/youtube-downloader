@@ -1,17 +1,22 @@
 ---
+import { withBase, normPath } from '../lib/paths';
+
 const path = Astro.url.pathname;
 const links = [
-  { href: '/', label: 'Home' },
-  { href: '/download', label: 'Download' },
-  { href: '/faq', label: 'FAQ' },
-  { href: '/about', label: 'About' },
+  { slug: '', label: 'Home' },
+  { slug: 'download', label: 'Download' },
+  { slug: 'faq', label: 'FAQ' },
+  { slug: 'about', label: 'About' },
 ];
-const isActive = (href: string) =>
-  href === '/' ? path === '/' : path.startsWith(href);
+const isActive = (slug: string) => {
+  const target = normPath(withBase(slug));
+  const cur = normPath(path);
+  return slug === '' ? cur === target : cur === target || cur.startsWith(`${target}/`);
+};
 ---
 
 <header class="site-header">
-  <a class="brand" href="/">
+  <a class="brand" href={withBase('')}>
     <span class="brand-mark" aria-hidden="true">▶</span>
     <span>Grab<strong>Tube</strong></span>
   </a>
@@ -20,7 +25,7 @@ const isActive = (href: string) =>
       {
         links.map((l) => (
           <li>
-            <a href={l.href} aria-current={isActive(l.href) ? 'page' : undefined}>
+            <a href={withBase(l.slug)} aria-current={isActive(l.slug) ? 'page' : undefined}>
               {l.label}
             </a>
           </li>
