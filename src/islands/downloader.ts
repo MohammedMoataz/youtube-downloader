@@ -3,7 +3,8 @@
 // Covers US1 (MP4), US2 (MP3 + metadata), US3 (playlist ZIP, per-item, cancel),
 // error/retry (FR-014), and timeout + duplicate-submission guards (T050 / analysis C2).
 
-import { api, ApiError } from './api-client';
+import { api } from './api';
+import { ApiError } from './api-client';
 import { classifyLink } from './link-utils';
 import type { DownloadFormat, MediaItem, ResolveResult } from '../lib/types';
 

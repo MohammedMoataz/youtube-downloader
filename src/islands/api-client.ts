@@ -2,7 +2,6 @@
 // (specs/001-youtube-downloader/contracts/extraction-service.md).
 // No secret is sent from the browser; the service is CORS-allowed (constitution Principle I).
 
-import { config } from '../lib/config';
 import { MAX_HEIGHT_PX } from '../lib/types';
 import type { DownloadJob, DownloadRequest, ResolveResult } from '../lib/types';
 
@@ -19,15 +18,20 @@ export class ApiError extends Error {
 
 const DEFAULT_TIMEOUT_MS = 15_000;
 
-async function request<T>(path: string, init: RequestInit = {}, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<T> {
-  if (!config.downloaderApiBase) {
+async function request<T>(
+  base: string,
+  path: string,
+  init: RequestInit = {},
+  timeoutMs = DEFAULT_TIMEOUT_MS
+): Promise<T> {
+  if (!base) {
     throw new ApiError('no_config', 'Download service is not configured. Please try again later.');
   }
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   let res: Response;
   try {
-    res = await fetch(`${config.downloaderApiBase}${path}`, {
+    res = await fetch(`${base}${path}`, {
       ...init,
       signal: init.signal ?? ctrl.signal,
       headers: { 'content-type': 'application/json', ...(init.headers ?? {}) },
@@ -37,7 +41,10 @@ async function request<T>(path: string, init: RequestInit = {}, timeoutMs = DEFA
     if (err instanceof DOMException && err.name === 'AbortError') {
       throw new ApiError('timeout', 'The request took too long. Please try again.');
     }
-    throw new ApiError('network', 'Could not reach the download service. Check your connection and retry.');
+    throw new ApiError(
+      'network',
+      'Could not reach the download service. Check your connection and retry.'
+    );
   }
   clearTimeout(timer);
 
@@ -68,33 +75,41 @@ function capQualities(result: ResolveResult): ResolveResult {
   return result;
 }
 
-export const api = {
-  resolve(url: string, signal?: AbortSignal): Promise<ResolveResult> {
-    return request<ResolveResult>('/resolve', {
-      method: 'POST',
-      body: JSON.stringify({ url }),
-      signal,
-    }).then(capQualities);
-  },
+/**
+ * Build a client for the extraction service. `getBase` is read on every call so callers
+ * (the website's build-time config, the extension's runtime settings) can supply the URL.
+ */
+export function createApi(getBase: () => string) {
+  return {
+    resolve(url: string, signal?: AbortSignal): Promise<ResolveResult> {
+      return request<ResolveResult>(getBase(), '/resolve', {
+        method: 'POST',
+        body: JSON.stringify({ url }),
+        signal,
+      }).then(capQualities);
+    },
 
-  async createJob(req: DownloadRequest): Promise<{ jobId: string; status: string }> {
-    if (req.format === 'mp4' && !req.qualityId) {
-      throw new ApiError('bad_request', 'Please choose a video quality before downloading.');
-    }
-    const payload =
-      req.format === 'mp3' ? { source: req.source, id: req.id, format: 'mp3' } : req;
-    return request('/jobs', { method: 'POST', body: JSON.stringify(payload) });
-  },
+    async createJob(req: DownloadRequest): Promise<{ jobId: string; status: string }> {
+      if (req.format === 'mp4' && !req.qualityId) {
+        throw new ApiError('bad_request', 'Please choose a video quality before downloading.');
+      }
+      const payload =
+        req.format === 'mp3' ? { source: req.source, id: req.id, format: 'mp3' } : req;
+      return request(getBase(), '/jobs', { method: 'POST', body: JSON.stringify(payload) });
+    },
 
-  getJob(jobId: string): Promise<DownloadJob> {
-    return request<DownloadJob>(`/jobs/${encodeURIComponent(jobId)}`);
-  },
+    getJob(jobId: string): Promise<DownloadJob> {
+      return request<DownloadJob>(getBase(), `/jobs/${encodeURIComponent(jobId)}`);
+    },
 
-  cancelJob(jobId: string): Promise<DownloadJob> {
-    return request<DownloadJob>(`/jobs/${encodeURIComponent(jobId)}/cancel`, { method: 'POST' });
-  },
+    cancelJob(jobId: string): Promise<DownloadJob> {
+      return request<DownloadJob>(getBase(), `/jobs/${encodeURIComponent(jobId)}/cancel`, {
+        method: 'POST',
+      });
+    },
 
-  fileUrl(jobId: string): string {
-    return `${config.downloaderApiBase}/jobs/${encodeURIComponent(jobId)}/file`;
-  },
-};
+    fileUrl(jobId: string): string {
+      return `${getBase()}/jobs/${encodeURIComponent(jobId)}/file`;
+    },
+  };
+}

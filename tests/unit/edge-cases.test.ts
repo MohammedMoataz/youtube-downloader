@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { classifyLink } from '../../src/islands/link-utils';
-import { api, ApiError } from '../../src/islands/api-client';
+import { api } from '../../src/islands/api';
+import { ApiError } from '../../src/islands/api-client';
 
 afterEach(() => vi.restoreAllMocks());
 

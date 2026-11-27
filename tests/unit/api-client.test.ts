@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { api, ApiError } from '../../src/islands/api-client';
+import { ApiError, createApi } from '../../src/islands/api-client';
+import { api } from '../../src/islands/api';
 
 function mockFetchOnce(status: number, body: unknown) {
   (globalThis.fetch as unknown) = vi.fn(async () => ({
@@ -53,7 +54,11 @@ describe('api.createJob (US1/US2)', () => {
   });
 
   it('omits qualityId for an MP3 job (US2)', async () => {
-    const spy = vi.fn(async () => ({ ok: true, status: 202, json: async () => ({ jobId: 'j1', status: 'queued' }) }));
+    const spy = vi.fn(async () => ({
+      ok: true,
+      status: 202,
+      json: async () => ({ jobId: 'j1', status: 'queued' }),
+    }));
     (globalThis.fetch as unknown) = spy;
     await api.createJob({ source: 'video', id: 'abc12345', format: 'mp3', qualityId: null });
     const sentBody = JSON.parse((spy.mock.calls[0][1] as RequestInit).body as string);
@@ -76,5 +81,33 @@ describe('api.getJob (polling)', () => {
     const job = await api.getJob('j1');
     expect(job.status).toBe('completed');
     expect(job.resultUrl).toBe('/jobs/j1/file');
+  });
+});
+
+describe('createApi (custom base for other clients)', () => {
+  it('uses the base from getBase at call time', async () => {
+    mockFetchOnce(200, {
+      kind: 'video',
+      item: {
+        id: 'abc12345',
+        title: 'T',
+        author: 'A',
+        thumbnailUrl: 'x',
+        durationSeconds: 1,
+        audioAvailable: true,
+        qualities: [],
+      },
+    });
+    let base = 'http://one:1';
+    const client = createApi(() => base);
+    base = 'http://two:2';
+    await client.resolve('https://youtu.be/abc12345');
+    const fetchMock = globalThis.fetch as unknown as { mock: { calls: unknown[][] } };
+    expect(fetchMock.mock.calls[0][0]).toBe('http://two:2/resolve');
+    expect(client.fileUrl('j 1')).toBe('http://two:2/jobs/j%201/file');
+  });
+
+  it('rejects with no_config when the base is empty', async () => {
+    await expect(createApi(() => '').resolve('x')).rejects.toMatchObject({ code: 'no_config' });
   });
 });
