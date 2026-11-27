@@ -14,7 +14,7 @@ concurrency:
 jobs:
   test:
     name: Unit + Build + E2E + A11y
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       # Tests run against the bundled mock extraction service.
       PUBLIC_DOWNLOADER_API: http://localhost:8787
@@ -54,7 +54,7 @@ jobs:
 
   lighthouse:
     name: Performance budgets (Lighthouse CI)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       PUBLIC_DOWNLOADER_API: http://localhost:8787
     steps:
