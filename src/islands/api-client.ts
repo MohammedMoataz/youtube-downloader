@@ -67,7 +67,6 @@ async function request<T>(
 function capQualities(result: ResolveResult): ResolveResult {
   const cap = (items: { qualities: { heightPx: number }[] }[]) =>
     items.forEach((it) => {
-      // @ts-expect-error narrowed structurally; qualities are QualityOption[]
       it.qualities = it.qualities.filter((q) => q.heightPx <= MAX_HEIGHT_PX);
     });
   if (result.kind === 'video') cap([result.item]);
