@@ -17,6 +17,8 @@ export class ApiError extends Error {
 }
 
 const DEFAULT_TIMEOUT_MS = 15_000;
+// Above the service's own 30 s lookup limit, so its error message arrives before we give up.
+const RESOLVE_TIMEOUT_MS = 35_000;
 
 async function request<T>(
   base: string,
@@ -29,11 +31,14 @@ async function request<T>(
   }
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  // A caller's signal adds a way to cancel; it never replaces the time limit.
+  if (init.signal?.aborted) ctrl.abort();
+  else init.signal?.addEventListener('abort', () => ctrl.abort(), { once: true });
   let res: Response;
   try {
     res = await fetch(`${base}${path}`, {
       ...init,
-      signal: init.signal ?? ctrl.signal,
+      signal: ctrl.signal,
       headers: { 'content-type': 'application/json', ...(init.headers ?? {}) },
     });
   } catch (err) {
@@ -81,11 +86,10 @@ function capQualities(result: ResolveResult): ResolveResult {
 export function createApi(getBase: () => string) {
   return {
     resolve(url: string, signal?: AbortSignal): Promise<ResolveResult> {
-      return request<ResolveResult>(getBase(), '/resolve', {
-        method: 'POST',
-        body: JSON.stringify({ url }),
-        signal,
-      }).then(capQualities);
+      const init = { method: 'POST', body: JSON.stringify({ url }), signal };
+      return request<ResolveResult>(getBase(), '/resolve', init, RESOLVE_TIMEOUT_MS).then(
+        capQualities
+      );
     },
 
     async createJob(req: DownloadRequest): Promise<{ jobId: string; status: string }> {
