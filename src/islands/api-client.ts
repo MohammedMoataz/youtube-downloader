@@ -17,6 +17,8 @@ export class ApiError extends Error {
 }
 
 const DEFAULT_TIMEOUT_MS = 15_000;
+// Above the service's own 30 s lookup limit, so its error message arrives before we give up.
+const RESOLVE_TIMEOUT_MS = 35_000;
 
 async function request<T>(
   base: string,
@@ -29,15 +31,27 @@ async function request<T>(
   }
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+  // A caller's signal adds a way to cancel; it never replaces the time limit.
+  const cancel = () => ctrl.abort();
+  if (init.signal?.aborted) cancel();
+  else init.signal?.addEventListener('abort', cancel);
+  try {
+    return await send<T>(`${base}${path}`, init, ctrl.signal);
+  } finally {
+    clearTimeout(timer);
+    init.signal?.removeEventListener('abort', cancel);
+  }
+}
+
+async function send<T>(url: string, init: RequestInit, signal: AbortSignal): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${base}${path}`, {
+    res = await fetch(url, {
       ...init,
-      signal: init.signal ?? ctrl.signal,
+      signal,
       headers: { 'content-type': 'application/json', ...(init.headers ?? {}) },
     });
   } catch (err) {
-    clearTimeout(timer);
     if (err instanceof DOMException && err.name === 'AbortError') {
       throw new ApiError('timeout', 'The request took too long. Please try again.');
     }
@@ -46,7 +60,6 @@ async function request<T>(
       'Could not reach the download service. Check your connection and retry.'
     );
   }
-  clearTimeout(timer);
 
   if (!res.ok) {
     let message = `Request failed (${res.status}).`;
@@ -81,11 +94,10 @@ function capQualities(result: ResolveResult): ResolveResult {
 export function createApi(getBase: () => string) {
   return {
     resolve(url: string, signal?: AbortSignal): Promise<ResolveResult> {
-      return request<ResolveResult>(getBase(), '/resolve', {
-        method: 'POST',
-        body: JSON.stringify({ url }),
-        signal,
-      }).then(capQualities);
+      const init = { method: 'POST', body: JSON.stringify({ url }), signal };
+      return request<ResolveResult>(getBase(), '/resolve', init, RESOLVE_TIMEOUT_MS).then(
+        capQualities
+      );
     },
 
     async createJob(req: DownloadRequest): Promise<{ jobId: string; status: string }> {

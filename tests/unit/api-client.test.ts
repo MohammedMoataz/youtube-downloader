@@ -111,3 +111,75 @@ describe('createApi (custom base for other clients)', () => {
     await expect(createApi(() => '').resolve('x')).rejects.toMatchObject({ code: 'no_config' });
   });
 });
+
+describe('request time limits', () => {
+  /** A fetch that never answers and rejects only when its signal aborts. */
+  function mockHangingFetch() {
+    (globalThis.fetch as unknown) = vi.fn(
+      (_url: string, init: RequestInit) =>
+        new Promise((_resolve, reject) => {
+          const fail = () => reject(new DOMException('aborted', 'AbortError'));
+          if (init.signal?.aborted) fail();
+          else init.signal?.addEventListener('abort', fail);
+        })
+    );
+  }
+  const client = createApi(() => 'http://x:1');
+  const outcome = (p: Promise<unknown>) => {
+    const state = { code: 'pending' };
+    p.catch((e: ApiError) => (state.code = e.code));
+    return state;
+  };
+
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it('still times out a lookup when the caller passes a signal', async () => {
+    mockHangingFetch();
+    const state = outcome(client.resolve('u', new AbortController().signal));
+    await vi.advanceTimersByTimeAsync(35_000);
+    expect(state.code).toBe('timeout');
+  });
+
+  it('waits longer than the server lookup limit of 30 s', async () => {
+    mockHangingFetch();
+    const state = outcome(client.resolve('u'));
+    await vi.advanceTimersByTimeAsync(31_000);
+    expect(state.code).toBe('pending');
+  });
+
+  it('keeps the 15 s limit for status checks', async () => {
+    mockHangingFetch();
+    const state = outcome(client.getJob('j1'));
+    await vi.advanceTimersByTimeAsync(15_000);
+    expect(state.code).toBe('timeout');
+  });
+
+  it('aborts as soon as the caller aborts', async () => {
+    mockHangingFetch();
+    const caller = new AbortController();
+    const state = outcome(client.resolve('u', caller.signal));
+    caller.abort();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(state.code).toBe('timeout');
+  });
+
+  it('does not start waiting when the signal is already aborted', async () => {
+    mockHangingFetch();
+    const caller = new AbortController();
+    caller.abort();
+    const state = outcome(client.resolve('u', caller.signal));
+    await vi.advanceTimersByTimeAsync(0);
+    expect(state.code).toBe('timeout');
+  });
+
+  it('detaches from the caller signal once the request has finished', async () => {
+    mockFetchOnce(500, { error: { code: 'internal', message: 'x' } });
+    const caller = new AbortController();
+    const added = vi.spyOn(caller.signal, 'addEventListener');
+    const removed = vi.spyOn(caller.signal, 'removeEventListener');
+    await client.resolve('u', caller.signal).catch(() => {});
+    expect(added).toHaveBeenCalledTimes(1);
+    expect(removed).toHaveBeenCalledWith('abort', added.mock.calls[0][1]);
+  });
+});
