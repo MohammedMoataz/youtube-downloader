@@ -172,4 +172,14 @@ describe('request time limits', () => {
     await vi.advanceTimersByTimeAsync(0);
     expect(state.code).toBe('timeout');
   });
+
+  it('detaches from the caller signal once the request has finished', async () => {
+    mockFetchOnce(500, { error: { code: 'internal', message: 'x' } });
+    const caller = new AbortController();
+    const added = vi.spyOn(caller.signal, 'addEventListener');
+    const removed = vi.spyOn(caller.signal, 'removeEventListener');
+    await client.resolve('u', caller.signal).catch(() => {});
+    expect(added).toHaveBeenCalledTimes(1);
+    expect(removed).toHaveBeenCalledWith('abort', added.mock.calls[0][1]);
+  });
 });

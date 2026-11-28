@@ -32,17 +32,26 @@ async function request<T>(
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   // A caller's signal adds a way to cancel; it never replaces the time limit.
-  if (init.signal?.aborted) ctrl.abort();
-  else init.signal?.addEventListener('abort', () => ctrl.abort(), { once: true });
+  const cancel = () => ctrl.abort();
+  if (init.signal?.aborted) cancel();
+  else init.signal?.addEventListener('abort', cancel);
+  try {
+    return await send<T>(`${base}${path}`, init, ctrl.signal);
+  } finally {
+    clearTimeout(timer);
+    init.signal?.removeEventListener('abort', cancel);
+  }
+}
+
+async function send<T>(url: string, init: RequestInit, signal: AbortSignal): Promise<T> {
   let res: Response;
   try {
-    res = await fetch(`${base}${path}`, {
+    res = await fetch(url, {
       ...init,
-      signal: ctrl.signal,
+      signal,
       headers: { 'content-type': 'application/json', ...(init.headers ?? {}) },
     });
   } catch (err) {
-    clearTimeout(timer);
     if (err instanceof DOMException && err.name === 'AbortError') {
       throw new ApiError('timeout', 'The request took too long. Please try again.');
     }
@@ -51,7 +60,6 @@ async function request<T>(
       'Could not reach the download service. Check your connection and retry.'
     );
   }
-  clearTimeout(timer);
 
   if (!res.ok) {
     let message = `Request failed (${res.status}).`;
